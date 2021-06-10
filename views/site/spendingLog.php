@@ -22,7 +22,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $expenseDataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'date',
+            [
+                'attribute' => 'date',
+                'format' => ['date', 'php:d-M-Y']
+            ],
             'item_name',
             'total_item',
             [

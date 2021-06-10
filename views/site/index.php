@@ -14,11 +14,13 @@ $this->title = 'Dompetku';
     #income-form{
         height:300px;
     }
-
+    
     .site-index {
         text-align: center;
+        margin-top:50px;
     }
-"); ?>
+    "); ?>
+<small class="alert alert-info" style="margin:0px auto;">SISA UANG ANDA SAAT INI : <?= "Rp. " . number_format($remainingMoney, 2, ',', '.') ?> </small>
 <div class="site-index">
     <div class="row">
         <!-- income form -->

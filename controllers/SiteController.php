@@ -66,6 +66,12 @@ class SiteController extends Controller
     {
         $expenseModel = new ExpenseForm();
         $incomeModel = new IncomeForm();
+        // getting remaining money on wallet with createCommand
+        $db = Yii::$app->db;
+        $incomeSum = $db->createCommand('SELECT SUM(money) as incomeSum FROM dompetku WHERE item_name IS  NULL;')->queryAll();
+        $expenseSum = $db->createCommand('SELECT SUM(money) as expenseSum FROM dompetku WHERE item_name IS NOT NULL;')->queryAll();
+        $remainingMoney = $incomeSum[0]['incomeSum'] - $expenseSum[0]['expenseSum'];
+
         if ($expenseModel->load(Yii::$app->request->post()) && $expenseModel->validate()) {
             $expenseModel->money = (float)$expenseModel->money;
             $expenseModel->save();
@@ -78,7 +84,8 @@ class SiteController extends Controller
         }
         return $this->render('index', [
             'expenseModel' => $expenseModel,
-            'incomeModel' => $incomeModel
+            'incomeModel' => $incomeModel,
+            'remainingMoney' => $remainingMoney
         ]);
     }
 
@@ -123,7 +130,16 @@ class SiteController extends Controller
      */
     public function actionIncomeLog()
     {
-        return $this->render('incomeLog');
+
+        $incomeDataProvider = new SqlDataProvider([
+            'sql' => "SELECT * FROM dompetku WHERE item_name IS NULL",
+            'pagination' => [
+                'pageSize' => 2,
+            ],
+        ]);
+        return $this->render('incomeLog', [
+            'incomeDataProvider' => $incomeDataProvider
+        ]);
     }
 
     /**
@@ -140,16 +156,6 @@ class SiteController extends Controller
                 'pageSize' => 2,
             ],
         ]);
-
-        // function rupiah($angka)
-        // {
-
-        //     $hasil_rupiah = "Rp " . number_format($angka, 2, ',', '.');
-        //     return $hasil_rupiah;
-        // }
-        // $expenseDataProvider->money = rupiah($expenseDataProvider->money);
-        // print_r($expenseDataProvider->money);
-        // die();
         return $this->render('spendingLog', [
             'expenseDataProvider' => $expenseDataProvider
         ]);
