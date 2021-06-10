@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\ExpenseForm;
 use app\models\IncomeForm;
+use yii\data\SqlDataProvider;
 
 class SiteController extends Controller
 {
@@ -132,6 +133,25 @@ class SiteController extends Controller
      */
     public function actionSpendingLog()
     {
-        return $this->render('spendingLog');
+
+        $expenseDataProvider = new SqlDataProvider([
+            'sql' => "SELECT * FROM dompetku WHERE item_name IS NOT NULL",
+            'pagination' => [
+                'pageSize' => 2,
+            ],
+        ]);
+
+        // function rupiah($angka)
+        // {
+
+        //     $hasil_rupiah = "Rp " . number_format($angka, 2, ',', '.');
+        //     return $hasil_rupiah;
+        // }
+        // $expenseDataProvider->money = rupiah($expenseDataProvider->money);
+        // print_r($expenseDataProvider->money);
+        // die();
+        return $this->render('spendingLog', [
+            'expenseDataProvider' => $expenseDataProvider
+        ]);
     }
 }
